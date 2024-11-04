@@ -1,49 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_columnWeight="1"
-    android:layout_margin="8dp"
+<androidx.cardview.widget.CardView
 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
-    android:padding="16dp">
+    android:padding="16dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
+        android:id="@+id/device_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/device_name_1"
+            android:id="@+id/device_name"
             android:layout_margin="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Device 1"
+            android:text="기기 연결"
             android:textSize="18sp"
             android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/device_status_1"
+            android:id="@+id/device_status"
             android:layout_marginLeft="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Connected"
+            android:text="연결되지 않음"
             android:textSize="14sp"
             android:textColor="#696969"/>
-        <ImageButton
-            android:id="@+id/device_action_button_1"
-            android:layout_margin="5dp"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="end"
+
+        <!-- Horizontal LinearLayout for the third TextView and ImageButton -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginTop="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Device Options"
-            android:src="@android:drawable/ic_menu_more"/>
+            android:gravity="">
+
+            <TextView
+                android:id="@+id/device_feature"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="5dp"
+                android:text=""
+                android:textSize="14sp"
+                android:textColor="#696969"/>
+
+            <ImageButton
+                android:id="@+id/device_action_button"
+                android:layout_margin="5dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Device Options"
+                android:scaleType="centerInside"
+                android:tint="#999999"
+                android:src="@drawable/run_icon_card"/>
+        </LinearLayout>
+
     </LinearLayout>
-</LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -7,13 +7,10 @@ import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.PopupMenu
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
@@ -31,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private var connectedDevice: BluetoothDevice? = null
     private lateinit var deviceNameTextView: TextView
     private lateinit var deviceStatusTextView: TextView
+    private lateinit var devicefeatureTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,8 +43,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         menubtn = findViewById(R.id.add_device_button)
-        deviceNameTextView = findViewById(R.id.device_name_1)
-        deviceStatusTextView = findViewById(R.id.device_status_1)
+        deviceNameTextView = findViewById(R.id.device_name)
+        deviceStatusTextView = findViewById(R.id.device_status)
+        devicefeatureTextView = findViewById(R.id.device_feature)
 
         menubtn.setOnClickListener { view ->
             // Create and show the popup menu
@@ -81,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         connectedDevice = intent.getParcelableExtra("connectedDevice")
         connectedDevice?.let { device ->
             deviceNameTextView.text = device.name ?: "Unknown Device"
-            deviceStatusTextView.text = "Connected"
+            deviceStatusTextView.text = "연결됨"
 
             // BLE 장치에 연결하고 GATT 설정
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED) {
@@ -99,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                 gatt.discoverServices()
             } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
                 runOnUiThread {
-                    deviceStatusTextView.text = "Disconnected"
+                    deviceStatusTextView.text = "연결되지 않음"
                 }
             }
         }
@@ -112,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                 if (characteristic != null) {
                     runOnUiThread {
                         // LED 제어 버튼 클릭 리스너 설정
-                        findViewById<ImageButton>(R.id.device_action_button_1).setOnClickListener {
+                        findViewById<ImageButton>(R.id.device_action_button).setOnClickListener {
                             toggleLED(characteristic)
                         }
                     }
@@ -127,7 +126,18 @@ class MainActivity : AppCompatActivity() {
         characteristic.value = byteArrayOf(newValue.toByte())
 
         bluetoothGatt?.writeCharacteristic(characteristic)
-        deviceStatusTextView.text = if (newValue == 1) "LED On" else "LED Off"
+        devicefeatureTextView.text = if (newValue == 1) "LED 켜짐" else "LED 꺼짐"
+
+        if(newValue == 1) {
+                findViewById<LinearLayout>(R.id.device_card).setBackgroundColor(
+                    Color.parseColor("#87CEEB")
+                )
+        }
+        else {
+            findViewById<LinearLayout>(R.id.device_card).setBackgroundColor(
+                Color.parseColor("#FFFFFF")
+            )
+        }
     }
 
     override fun onDestroy() {
