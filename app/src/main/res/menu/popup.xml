@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menupo_add"
+        android:title="기기 추가" />
+
+    <item
+        android:id="@+id/menupo_delete"
+        android:title="기기 삭제" />
+
+</menu>
