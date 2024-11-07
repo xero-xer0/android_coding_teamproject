@@ -6,7 +6,7 @@
         android:title="기기 추가" />
 
     <item
-        android:id="@+id/menupo_delete"
-        android:title="기기 삭제" />
+        android:id="@+id/menupo_disconnectall"
+        android:title="모두 연결 해제" />
 
 </menu>

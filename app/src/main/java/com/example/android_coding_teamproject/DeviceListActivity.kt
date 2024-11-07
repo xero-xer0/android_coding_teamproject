@@ -97,9 +97,15 @@ class DeviceListActivity : AppCompatActivity() {
 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
-            result?.device?.let { device ->
+            result?.let { scanResult ->
+                val device = scanResult.device
+                val rssi = scanResult.rssi
                 if (!deviceList.contains(device)) {
                     deviceList.add(device)
+                    deviceList.sortByDescending { scanResult.rssi }
+                    if (deviceList.size > 20) {
+                        deviceList.subList(20, deviceList.size).clear()
+                    }
                     updateDeviceListView()
                 }
             }
@@ -107,8 +113,13 @@ class DeviceListActivity : AppCompatActivity() {
     }
 
     private fun updateDeviceListView() {
-        val deviceNames = deviceList.map {
-            if (it.name == connectedDeviceName) "Connected: ${it.name}" else it.name ?: "Unnamed Device"
+        val deviceNames = deviceList.map { device ->
+            val deviceName = device.name ?: "Unnamed Device"
+            if (connectedDeviceName != null && device.name == connectedDeviceName) {
+                "Connected: $deviceName"
+            } else {
+                deviceName
+            }
         }
         deviceAdapter.clear()
         deviceAdapter.addAll(deviceNames)
