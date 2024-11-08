@@ -11,6 +11,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
@@ -32,8 +33,8 @@ class MainActivity : AppCompatActivity() {
     private var bluetoothGatt: BluetoothGatt? = null
     private val handler = Handler()  // Handler for optimized updates
 
-    private val LED_SERVICE_UUID = UUID.fromString("de8a5aac-a99b-c315-0c80-60d4cbb51224")
-    private val LED_CHARACTERISTIC_UUID = UUID.fromString("5b026510-4088-c297-46d8-be6c736a087a")
+    private var ledServiceUUID: UUID? = null
+    private var ledCharacteristicUUID: UUID? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +43,6 @@ class MainActivity : AppCompatActivity() {
 
         setupUI()
     }
-
 
     private fun setupUI() {
         menubtn = findViewById(R.id.add_device_button)
@@ -56,9 +56,9 @@ class MainActivity : AppCompatActivity() {
                         R.id.menupo_add -> startActivity(Intent(this@MainActivity, DeviceListActivity::class.java))
                         R.id.menupo_disconnectall -> {
                             val builder = AlertDialog.Builder(this@MainActivity)
-                            builder.setTitle("Disconnect All Devices")
-                            builder.setMessage("Are you sure you want to disconnect all devices?")
-                            builder.setPositiveButton("Yes") { dialog, which ->
+                            builder.setTitle("모든 기기 연결 해제")
+                            builder.setMessage("모든 기기의 연결을 해제하시겠습니까?")
+                            builder.setPositiveButton("네") { dialog, which ->
                                 bluetoothGatt?.close()
                                 bluetoothGatt = null
                                 connectedDevice = null  // 연결된 기기 정보를 null로 설정
@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                                     updateDeviceStatus()  // UI 업데이트
                                 }
                             }
-                            builder.setNegativeButton("No") { dialog, which -> }
+                            builder.setNegativeButton("아니오") { dialog, which -> }
                             builder.show()
                         }
                     }
@@ -99,11 +99,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onResume() {
         super.onResume()
-        connectedDevice = intent.getParcelableExtra("connectedDevice")
 
+        // 인텐트에서 연결된 장치와 UUID 값을 받아옵니다.
+        connectedDevice = intent.getParcelableExtra("connectedDevice")
+        val serviceUUIDString = intent.getStringArrayListExtra("serviceUUIDs")
+        val characteristicUUIDString = intent.getStringArrayListExtra("characteristicUUIDs")
+
+        // 전달받은 UUID 값 확인을 위한 로그 출력
+        Log.d("MainActivity", "Received serviceUUID: $serviceUUIDString")
+        Log.d("MainActivity", "Received characteristicUUID: $characteristicUUIDString")
+
+        // UUID 값이 null인 경우 예외 처리
+        if (serviceUUIDString != null && characteristicUUIDString != null) {
+            ledServiceUUID = UUID.fromString(serviceUUIDString[2])
+            ledCharacteristicUUID = UUID.fromString(characteristicUUIDString[4])
+//        } else {
+//            // UUID가 null일 경우 기본 값 설정 또는 오류 처리
+//            ledServiceUUID = UUID.fromString("de8a5aac-a99b-c315-0c80-60d4cbb51224")  // 기본값 설정
+//            ledCharacteristicUUID = UUID.fromString("5b026510-4088-c297-46d8-be6c736a087a")  // 기본값 설정
+//            Log.e("MainActivity", "UUID values are missing in the intent, using default values.")
+        }
+
+        // 연결된 장치가 있으면 BLE 연결을 시도
         connectedDevice?.let { device ->
             deviceNameTextView.text = device.name ?: "Unknown Device"
             deviceStatusTextView.text = "Connected"
@@ -129,10 +148,13 @@ class MainActivity : AppCompatActivity() {
 
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                gatt.getService(LED_SERVICE_UUID)?.getCharacteristic(LED_CHARACTERISTIC_UUID)?.let { characteristic ->
-                    runOnUiThread {
-                        findViewById<ImageButton>(R.id.device_action_button).setOnClickListener {
-                            toggleLED(characteristic)
+                // 인텐트에서 전달받은 서비스 UUID와 특성 UUID를 사용하여 해당 특성을 찾아 설정합니다.
+                ledServiceUUID.let { serviceUUID ->
+                    gatt.getService(serviceUUID)?.getCharacteristic(ledCharacteristicUUID)?.let { characteristic ->
+                        runOnUiThread {
+                            findViewById<ImageButton>(R.id.device_action_button).setOnClickListener {
+                                toggleLED(characteristic)
+                            }
                         }
                     }
                 }

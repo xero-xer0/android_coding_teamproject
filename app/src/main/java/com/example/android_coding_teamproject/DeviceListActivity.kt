@@ -8,17 +8,12 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.Image
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.*
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ListView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -33,6 +28,8 @@ class DeviceListActivity : AppCompatActivity() {
     private lateinit var bluetoothLeScanner: BluetoothLeScanner
     private var gatt: BluetoothGatt? = null
     private var connectedDeviceName: String? = null
+    private lateinit var handler: Handler
+    private var scanRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,14 +45,6 @@ class DeviceListActivity : AppCompatActivity() {
         deviceAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, mutableListOf())
         deviceListView.adapter = deviceAdapter
 
-        val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed(object : Runnable {
-            override fun run() {
-                loadDeviceList()
-                handler.postDelayed(this, 20000)
-            }
-        }, 20000)
-
         deviceListView.setOnItemClickListener { _, _, position, _ ->
             val device = deviceList[position]
             connectToDevice(device)
@@ -66,6 +55,22 @@ class DeviceListActivity : AppCompatActivity() {
         }
 
         loadDeviceList()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 기기 목록 화면이 활성화될 때 BLE 스캔을 시작하고, 20초마다 반복 실행
+        if (connectedDeviceName == null) {
+            startBleScan()  // BLE 스캔 시작
+            startPeriodicScan()  // 20초마다 스캔 시작
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // 기기 목록 화면이 비활성화될 때 BLE 스캔을 중지하고, 반복 실행도 중지
+        stopBleScan()  // BLE 스캔 중지
+        stopPeriodicScan()  // 주기적인 스캔 중지
     }
 
     private fun loadDeviceList() {
@@ -92,6 +97,28 @@ class DeviceListActivity : AppCompatActivity() {
         } else {
             bluetoothLeScanner.startScan(scanCallback)
             Log.i("DeviceListActivity", "BLE 스캔을 시작합니다.")
+        }
+    }
+
+    private fun stopBleScan() {
+        bluetoothLeScanner.stopScan(scanCallback)
+        Log.i("DeviceListActivity", "BLE 스캔을 중지합니다.")
+    }
+
+    private fun startPeriodicScan() {
+        handler = Handler(Looper.getMainLooper())
+        scanRunnable = object : Runnable {
+            override fun run() {
+                startBleScan()  // BLE 스캔 시작
+                handler.postDelayed(this, 20000)  // 20초마다 반복 실행
+            }
+        }
+        handler.post(scanRunnable!!)
+    }
+
+    private fun stopPeriodicScan() {
+        scanRunnable?.let {
+            handler.removeCallbacks(it)  // 주기적인 스캔 중지
         }
     }
 
@@ -126,7 +153,6 @@ class DeviceListActivity : AppCompatActivity() {
         deviceAdapter.notifyDataSetChanged()
     }
 
-    // DeviceListActivity.kt 내 connectToDevice 함수 수정
     private fun connectToDevice(device: BluetoothDevice) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("연결 확인")
@@ -134,10 +160,6 @@ class DeviceListActivity : AppCompatActivity() {
             .setPositiveButton("예") { _, _ ->
                 Log.i("DeviceListActivity", "장치에 연결을 시도합니다.")
                 gatt = device.connectGatt(this, false, gattCallback)
-                // 연결된 장치 정보를 MainActivity로 전달
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("connectedDevice", device)
-                startActivity(intent)
             }
             .setNegativeButton("아니요") { dialog, _ ->
                 dialog.dismiss()
@@ -159,6 +181,34 @@ class DeviceListActivity : AppCompatActivity() {
         override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.i("DeviceListActivity", "GATT 서비스가 발견되었습니다.")
+                gatt?.services?.forEach { service ->
+                    // 서비스의 UUID 출력
+                    Log.i("DeviceListActivity", "서비스 UUID: ${service.uuid}")
+                    service.characteristics.forEach { characteristic ->
+                        // 각 특성의 UUID 출력
+                        Log.i("DeviceListActivity", "특성 UUID: ${characteristic.uuid}")
+                        // 특성 값도 읽어서 로그에 출력
+                        gatt.readCharacteristic(characteristic)
+                    }
+                }
+                // 서비스 및 특성 정보 전달
+                val intent = Intent(this@DeviceListActivity, MainActivity::class.java)
+                val serviceUUIDs = gatt?.services?.map { it.uuid.toString() } ?: emptyList()
+                val characteristicUUIDs = gatt?.services?.flatMap { service ->
+                    service.characteristics.map { it.uuid.toString() }
+                } ?: emptyList()
+
+                // 인텐트에 서비스와 특성 UUID 추가
+                intent.putStringArrayListExtra("serviceUUIDs", ArrayList(serviceUUIDs))
+                intent.putStringArrayListExtra("characteristicUUIDs", ArrayList(characteristicUUIDs))
+
+                // 연결된 장치도 인텐트에 추가
+                gatt?.device?.let { device ->
+                    intent.putExtra("connectedDevice", device)
+                }
+
+                startActivity(intent)
+
             } else {
                 Log.e("DeviceListActivity", "GATT 서비스 검색에 실패했습니다.")
             }
@@ -171,7 +221,7 @@ class DeviceListActivity : AppCompatActivity() {
         ) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 characteristic?.value?.let { value ->
-                    Log.i("DeviceListActivity", "특성 읽기 성공: ${value.contentToString()}")
+                    Log.i("DeviceListActivity", "특성 읽기 성공: ${characteristic.uuid}, 값: ${value.contentToString()}")
                 }
             } else {
                 Log.e("DeviceListActivity", "특성 읽기에 실패했습니다.")

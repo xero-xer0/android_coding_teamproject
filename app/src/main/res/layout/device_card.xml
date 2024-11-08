@@ -22,43 +22,39 @@
         android:orientation="horizontal">
 
 
-
         <LinearLayout
             android:layout_width="200dp"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/device_name"
-                android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="기기 연결"
                 android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/device_status"
-                android:layout_marginLeft="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="연결되지 않음"
-                android:textSize="14sp"
-                android:textColor="#696969"/>
-
+                android:textColor="#696969"
+                android:textSize="14sp" />
 
 
             <TextView
                 android:id="@+id/device_feature"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:layout_weight="1"
-                android:layout_marginLeft="5dp"
-                android:layout_marginBottom="5dp"
                 android:text=""
-                android:textSize="14sp"
-                android:textColor="#696969"/>
+                android:textColor="#696969"
+                android:textSize="14sp" />
 
 
         </LinearLayout>
