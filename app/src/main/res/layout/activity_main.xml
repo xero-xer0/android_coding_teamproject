@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/background">
 
     <!-- Header with "Smart Hub" text and "+" button -->
     <LinearLayout
@@ -19,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Smart Hub"
+            android:textColor="#D0D0D0"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_weight="1"/>
@@ -30,7 +32,8 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="centerInside"
             android:contentDescription="Add Device"
-            android:src="@drawable/plus" />
+            android:src="@drawable/plus"
+            android:tint="#D0D0D0"/>
     </LinearLayout>
 
     <!-- Device grid layout -->
@@ -75,34 +78,37 @@
             <ImageButton
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:scaleX="0.6"
-                android:scaleY="0.7"
-                android:text="홈"
+                android:contentDescription="홈"
                 android:textAlignment="center"
                 android:layout_weight="1"
-                android:background="@drawable/icon_home"
+                android:scaleType="centerInside"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/icon_home"
+                android:tint="#D0D0D0"
                 android:id="@+id/bottom_home_button"
                 />
             <ImageButton
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:scaleX="0.7"
-                android:scaleY="0.7"
-                android:text="자동화"
+                android:contentDescription="자동화"
                 android:textAlignment="center"
                 android:layout_weight="1"
-                android:background="@drawable/icon_auto"
+                android:scaleType="centerInside"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/icon_auto"
+                android:tint="#D0D0D0"
                 android:id="@+id/bottom_auto_button"
                 />
             <ImageButton
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:scaleX="0.6"
-                android:scaleY="0.7"
-                android:text="메뉴"
+                android:contentDescription="메뉴"
                 android:textAlignment="center"
                 android:layout_weight="1"
-                android:background="@drawable/icon_menu"
+                android:scaleType="centerInside"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/icon_menu"
+                android:tint="#D0D0D0"
                 android:id="@+id/bottom_menu_button"
                 />
         </LinearLayout>
