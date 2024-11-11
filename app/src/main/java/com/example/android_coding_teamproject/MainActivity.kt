@@ -1,4 +1,3 @@
-MainActivity
 package com.example.android_coding_teamproject
 
 import android.Manifest
