@@ -1,3 +1,4 @@
+DeviceListActivity
 package com.example.android_coding_teamproject
 
 import android.Manifest
@@ -49,7 +50,6 @@ class DeviceListActivity : AppCompatActivity() {
             val device = deviceList[position]
             connectToDevice(device)
         }
-
         refreshButton.setOnClickListener {
             loadDeviceList()
         }
@@ -88,11 +88,20 @@ class DeviceListActivity : AppCompatActivity() {
 
     private fun startBleScan() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH_SCAN
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 bluetoothLeScanner.startScan(scanCallback)
                 Log.i("DeviceListActivity", "BLE 스캔을 시작합니다.")
             } else {
-                requestPermissionsLauncher.launch(arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT))
+                requestPermissionsLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.BLUETOOTH_SCAN,
+                        Manifest.permission.BLUETOOTH_CONNECT
+                    )
+                )
             }
         } else {
             bluetoothLeScanner.startScan(scanCallback)
@@ -167,13 +176,17 @@ class DeviceListActivity : AppCompatActivity() {
         builder.create().show()
     }
 
+
     private val gattCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.i("DeviceListActivity", "BLE 장치에 연결되었습니다.")
+                connectedDeviceName = gatt?.device?.name
                 gatt?.discoverServices() // 서비스 검색 시작
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i("DeviceListActivity", "BLE 장치와 연결이 끊어졌습니다.")
+                connectedDeviceName = null
+                gatt?.disconnect() // 연결 해제
                 gatt?.close() // GATT 리소스를 해제
             }
         }
@@ -200,7 +213,10 @@ class DeviceListActivity : AppCompatActivity() {
 
                 // 인텐트에 서비스와 특성 UUID 추가
                 intent.putStringArrayListExtra("serviceUUIDs", ArrayList(serviceUUIDs))
-                intent.putStringArrayListExtra("characteristicUUIDs", ArrayList(characteristicUUIDs))
+                intent.putStringArrayListExtra(
+                    "characteristicUUIDs",
+                    ArrayList(characteristicUUIDs)
+                )
 
                 // 연결된 장치도 인텐트에 추가
                 gatt?.device?.let { device ->
@@ -221,7 +237,10 @@ class DeviceListActivity : AppCompatActivity() {
         ) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 characteristic?.value?.let { value ->
-                    Log.i("DeviceListActivity", "특성 읽기 성공: ${characteristic.uuid}, 값: ${value.contentToString()}")
+                    Log.i(
+                        "DeviceListActivity",
+                        "특성 읽기 성공: ${characteristic.uuid}, 값: ${value.contentToString()}"
+                    )
                 }
             } else {
                 Log.e("DeviceListActivity", "특성 읽기에 실패했습니다.")
@@ -243,3 +262,4 @@ class DeviceListActivity : AppCompatActivity() {
         private const val REQUEST_ENABLE_BT = 1
     }
 }
+
