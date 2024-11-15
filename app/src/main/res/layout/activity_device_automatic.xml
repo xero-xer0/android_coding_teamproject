@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
+    android:id="@+id/main_auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -24,38 +24,22 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Smart Hub | Home"
+                android:text="Smart Hub | Automation"
                 android:textColor="#D0D0D0"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_weight="1"/>
 
-            <ImageButton
-                android:id="@+id/add_device_button"
-                android:layout_width="30dp"
-                android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:scaleType="centerInside"
-                android:contentDescription="Add Device"
-                android:src="@drawable/plus"
-                android:tint="#D0D0D0"/>
         </LinearLayout>
 
-    <!-- Device grid layout -->
+        <!-- Device grid layout -->
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="2"
+            android:columnCount="1"
             android:rowCount="4"
             android:layout_margin="10dp">
 
-            <!-- Device Card 1 -->
-            <include
-                layout="@layout/device_card"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_columnWeight="1" />
 
 
 
