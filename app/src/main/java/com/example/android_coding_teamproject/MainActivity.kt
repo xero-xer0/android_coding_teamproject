@@ -53,12 +53,19 @@ class MainActivity : AppCompatActivity() {
                 menuInflater.inflate(R.menu.popup, menu)
                 setOnMenuItemClickListener { menuItem ->
                     when (menuItem.itemId) {
-                        R.id.menupo_add -> startActivity(Intent(this@MainActivity, DeviceListActivity::class.java))
+                        R.id.menupo_add -> startActivity(
+                            Intent(
+                                this@MainActivity,
+                                DeviceListActivity::class.java
+                            )
+                        )
+
                         R.id.menupo_disconnectall -> {
                             val builder = AlertDialog.Builder(this@MainActivity)
                             builder.setTitle("모든 기기 연결 해제")
                             builder.setMessage("모든 기기의 연결을 해제하시겠습니까?")
                             builder.setPositiveButton("네") { dialog, which ->
+                                bluetoothGatt?.disconnect()
                                 bluetoothGatt?.close()
                                 bluetoothGatt = null
                                 connectedDevice = null  // 연결된 기기 정보를 null로 설정
@@ -126,7 +133,11 @@ class MainActivity : AppCompatActivity() {
         connectedDevice?.let { device ->
             deviceNameTextView.text = device.name ?: "Unknown Device"
             deviceStatusTextView.text = "Connected"
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.BLUETOOTH
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 bluetoothGatt = device.connectGatt(this, false, gattCallback)
             } else {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.BLUETOOTH), 1)
@@ -139,9 +150,11 @@ class MainActivity : AppCompatActivity() {
             if (newState == BluetoothGatt.STATE_CONNECTED) {
                 gatt.discoverServices()
             } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
+                bluetoothGatt?.disconnect()
+                bluetoothGatt?.close()
+                connectedDevice = null
                 runOnUiThread {
                     deviceStatusTextView.text = "Disconnected"
-                    bluetoothGatt?.close()
                 }
             }
         }
@@ -150,13 +163,14 @@ class MainActivity : AppCompatActivity() {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 // 인텐트에서 전달받은 서비스 UUID와 특성 UUID를 사용하여 해당 특성을 찾아 설정합니다.
                 ledServiceUUID.let { serviceUUID ->
-                    gatt.getService(serviceUUID)?.getCharacteristic(ledCharacteristicUUID)?.let { characteristic ->
-                        runOnUiThread {
-                            findViewById<ImageButton>(R.id.device_action_button).setOnClickListener {
-                                toggleLED(characteristic)
+                    gatt.getService(serviceUUID)?.getCharacteristic(ledCharacteristicUUID)
+                        ?.let { characteristic ->
+                            runOnUiThread {
+                                findViewById<ImageButton>(R.id.device_action_button).setOnClickListener {
+                                    toggleLED(characteristic)
+                                }
                             }
                         }
-                    }
                 }
             }
         }
@@ -178,12 +192,17 @@ class MainActivity : AppCompatActivity() {
         // UI 업데이트
         deviceFeatureTextView.text = if (newValue == 1) "LED On" else "LED Off"
         findViewById<LinearLayout>(R.id.device_card).apply {
-            setBackgroundColor(if (newValue == 1) Color.parseColor("#43de00") else Color.parseColor("#FFFFFF"))
+            setBackgroundColor(
+                if (newValue == 1) Color.parseColor("#43de00") else Color.parseColor(
+                    "#FFFFFF"
+                )
+            )
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        bluetoothGatt?.disconnect()
         bluetoothGatt?.close()
         bluetoothGatt = null
         updateDeviceStatus()
