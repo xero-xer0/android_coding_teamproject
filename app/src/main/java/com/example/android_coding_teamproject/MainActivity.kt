@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity() {
                                 DeviceListActivity::class.java
                             )
                         )
-
                         R.id.menupo_disconnectall -> {
                             val builder = AlertDialog.Builder(this@MainActivity)
                             builder.setTitle("모든 기기 연결 해제")
