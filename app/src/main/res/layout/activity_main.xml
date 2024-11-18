@@ -38,23 +38,33 @@
                 android:scaleType="centerInside"
                 android:contentDescription="Add Device"
                 android:src="@drawable/plus"
-                android:tint="#D0D0D0"/>
+                app:tint="#D0D0D0"/>
         </LinearLayout>
 
-    <!-- Device grid layout -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            >
+            <include
+                layout="@layout/device_temp_hum_card"
+                />
+        </LinearLayout>
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="2"
             android:rowCount="4"
-            android:layout_margin="10dp">
+            >
 
             <!-- Device Card 1 -->
             <include
                 layout="@layout/device_card"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_margin="16dp"
+
                 android:layout_columnWeight="1" />
 
 

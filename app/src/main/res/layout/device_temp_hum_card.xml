@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="#20000000"
+    app:cardCornerRadius="25dp"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@drawable/layout_radius_background"
+        >
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/temp_hum_icon_fix"
+            />
+        <TextView
+            style="@style/temp_hum_styles"
+            android:text="장소"
+            android:id="@+id/room_name"
+            />
+        <TextView
+            style="@style/temp_hum_styles"
+            android:text=" | "
+            />
+        <TextView
+            style="@style/temp_hum_styles"
+            android:text="온도"
+            android:id="@+id/room_temp"
+            />
+        <TextView
+            style="@style/temp_hum_styles"
+            android:text="°C | "
+            />
+        <TextView
+            style="@style/temp_hum_styles"
+            android:text="습도"
+            android:id="@+id/room_hum"
+            />
+        <TextView
+            style="@style/temp_hum_styles"
+            android:text="%"
+            />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

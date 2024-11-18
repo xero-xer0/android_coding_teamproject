@@ -26,6 +26,7 @@ import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
     private lateinit var menubtn: AppCompatImageButton
+    private lateinit var addbtn: AppCompatImageButton
     private var connectedDevice: BluetoothDevice? = null
     private lateinit var deviceNameTextView: TextView
     private lateinit var deviceStatusTextView: TextView
@@ -45,8 +46,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        menubtn = findViewById(R.id.add_device_button)
+        addbtn = findViewById(R.id.add_device_button)
+        addbtn.setOnClickListener {
+            startActivity(Intent(this, DeviceListActivity::class.java))
+        }
+        menubtn = findViewById(R.id.bottom_menu_button)
         updateDeviceStatus()
+
 
         menubtn.setOnClickListener { view ->
             val popup = PopupMenu(this, view).apply {
@@ -130,8 +136,8 @@ class MainActivity : AppCompatActivity() {
 
         // 연결된 장치가 있으면 BLE 연결을 시도
         connectedDevice?.let { device ->
-            deviceNameTextView.text = device.name ?: "Unknown Device"
-            deviceStatusTextView.text = "Connected"
+            deviceNameTextView.text = device.name ?: "알 수 없는 장치"
+            deviceStatusTextView.text = "연결됨"
             if (ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.BLUETOOTH
@@ -153,7 +159,7 @@ class MainActivity : AppCompatActivity() {
                 bluetoothGatt?.close()
                 connectedDevice = null
                 runOnUiThread {
-                    deviceStatusTextView.text = "Disconnected"
+                    deviceStatusTextView.text = "연결되지 않음"
                 }
             }
         }
@@ -189,14 +195,10 @@ class MainActivity : AppCompatActivity() {
         bluetoothGatt?.writeCharacteristic(characteristic)
 
         // UI 업데이트
-        deviceFeatureTextView.text = if (newValue == 1) "LED On" else "LED Off"
-        findViewById<LinearLayout>(R.id.device_card).apply {
-            setBackgroundColor(
-                if (newValue == 1) Color.parseColor("#43de00") else Color.parseColor(
-                    "#FFFFFF"
-                )
-            )
-        }
+        deviceFeatureTextView.text = if (newValue == 1) "LED 켜짐" else "LED 꺼짐"
+        val deviceCard = findViewById<LinearLayout>(R.id.device_card)
+        if(newValue==1)deviceCard.background.setTint(Color.parseColor("#43de00"))
+        else deviceCard.background.setTint(Color.parseColor("#D0D0D0"))
     }
 
     override fun onDestroy() {

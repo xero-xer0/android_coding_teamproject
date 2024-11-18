@@ -35,7 +35,7 @@
                 android:scaleType="centerInside"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/home_icon"
-                android:tint="#D0D0D0"
+                app:tint="#D0D0D0"
                 android:id="@+id/bottom_home_button"
                 />
             <ImageButton
@@ -47,7 +47,7 @@
                 android:scaleType="centerInside"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/auto_icon"
-                android:tint="#D0D0D0"
+                app:tint="#D0D0D0"
                 android:id="@+id/bottom_auto_button"
                 />
             <ImageButton
@@ -59,7 +59,7 @@
                 android:scaleType="centerInside"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/kebob_menu_icon"
-                android:tint="#D0D0D0"
+                app:tint="#D0D0D0"
                 android:id="@+id/bottom_menu_button"
                 />
         </LinearLayout>
