@@ -135,6 +135,7 @@ class DeviceListActivity : AppCompatActivity() {
             result?.let { scanResult ->
                 val device = scanResult.device
                 val rssi = scanResult.rssi
+
                 if (!deviceList.contains(device)) {
                     deviceList.add(device)
                     deviceList.sortByDescending { scanResult.rssi }
