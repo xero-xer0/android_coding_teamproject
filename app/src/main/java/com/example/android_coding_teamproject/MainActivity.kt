@@ -5,12 +5,16 @@ import android.app.AlertDialog
 import android.bluetooth.*
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.*
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
@@ -29,11 +33,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var deviceNameTextView: TextView
     private lateinit var deviceStatusTextView: TextView
     private lateinit var deviceFeatureTextView: TextView
+    private lateinit var actionButton: ImageButton
     private var bluetoothGatt: BluetoothGatt? = null
     // 데이터 특성 UUID 정의
+    private val ledServiceUUID: UUID = UUID.fromString("de8a5aac-a99b-c315-0c80-60d4cbb51224")
     private val dataCharacteristicUUID: UUID = UUID.fromString("00002a6e-0000-1000-8000-00805f9b34fb")
-    private val tempCharacteristicUUID: UUID = UUID.fromString("00002a6e-0000-1000-8000-00805f9b34fb")
-    private val humCharacteristicUUID: UUID = UUID.fromString("00002a6f-0000-1000-8000-00805f9b34fb")
+    private val ledCharacteristicUUID: UUID = UUID.fromString("5b026510-4088-c297-46d8-be6c736a087a")
     private var tempCharacteristic: BluetoothGattCharacteristic? = null
     private var humCharacteristic: BluetoothGattCharacteristic? = null
     private var dataCharacteristic: BluetoothGattCharacteristic? = null
@@ -59,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         deviceNameTextView = findViewById(R.id.device_name)
         deviceStatusTextView = findViewById(R.id.device_status)
         deviceFeatureTextView = findViewById(R.id.device_feature)
+        actionButton = findViewById(R.id.device_action_button)
 
         addbtn = findViewById(R.id.add_device_button)
         addbtn.setOnClickListener {
@@ -178,6 +184,16 @@ class MainActivity : AppCompatActivity() {
 
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
+                ledServiceUUID.let { serviceUUID ->
+                    gatt.getService(serviceUUID)?.getCharacteristic(ledCharacteristicUUID)
+                        ?.let { characteristic ->
+                            runOnUiThread {
+                                findViewById<ImageButton>(R.id.device_action_button).setOnClickListener {
+                                    toggleLED(characteristic)
+                                }
+                            }
+                        }
+                }
                 val serviceUUID = UUID.fromString("0000181a-0000-1000-8000-00805f9b34fb") // Environment Sensing Service
                 val environmentService = gatt.getService(serviceUUID)
                 if (environmentService != null) {
@@ -194,6 +210,7 @@ class MainActivity : AppCompatActivity() {
                 Log.w("MainActivity", "onServicesDiscovered received: $status")
             }
         }
+
         private fun startReadingCharacteristic() {
             handler = Handler(Looper.getMainLooper())
             readRunnable = object : Runnable {
@@ -205,6 +222,26 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             handler.post(readRunnable!!)
+        }
+
+        private fun toggleLED(characteristic: BluetoothGattCharacteristic) {
+            // 연결이 끊어졌으면 아무 작업도 하지 않음
+//            if (bluetoothGatt == null || !bluetoothGatt!!.connect()) {
+//                Toast.makeText(this, "연결된 기기가 없습니다", Toast.LENGTH_SHORT).show()
+//                return
+//            }
+
+            val newValue = if (characteristic.value?.getOrNull(0) == 1.toByte()) 0 else 1
+            characteristic.value = byteArrayOf(newValue.toByte())
+
+            // BLE 특성값을 장치에 쓰기
+            bluetoothGatt?.writeCharacteristic(characteristic)
+
+            // UI 업데이트
+            deviceFeatureTextView.text = if (newValue == 1) "LED 켜짐" else "LED 꺼짐"
+            val deviceCard = findViewById<LinearLayout>(R.id.device_card)
+            if(newValue==1)deviceCard.background.setTint(Color.parseColor("#43de00"))
+            else deviceCard.background.setTint(Color.parseColor("#D0D0D0"))
         }
 
         private fun startReadingCharacteristics() {
@@ -261,15 +298,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun parseTemperature(value: ByteArray): Float {
-        val tempRaw = ByteBuffer.wrap(value).order(ByteOrder.LITTLE_ENDIAN).short
-        return tempRaw / 100.0f
-    }
-
-    private fun parseHumidity(value: ByteArray): Float {
-        val humRaw = ByteBuffer.wrap(value).order(ByteOrder.LITTLE_ENDIAN).short
-        return humRaw / 100.0f
-    }
 
     override fun onDestroy() {
         super.onDestroy()
