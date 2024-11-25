@@ -30,11 +30,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var deviceStatusTextView: TextView
     private lateinit var deviceFeatureTextView: TextView
     private var bluetoothGatt: BluetoothGatt? = null
-
+    // 데이터 특성 UUID 정의
+    private val dataCharacteristicUUID: UUID = UUID.fromString("00002a6e-0000-1000-8000-00805f9b34fb")
     private val tempCharacteristicUUID: UUID = UUID.fromString("00002a6e-0000-1000-8000-00805f9b34fb")
     private val humCharacteristicUUID: UUID = UUID.fromString("00002a6f-0000-1000-8000-00805f9b34fb")
     private var tempCharacteristic: BluetoothGattCharacteristic? = null
     private var humCharacteristic: BluetoothGattCharacteristic? = null
+    private var dataCharacteristic: BluetoothGattCharacteristic? = null
+    // 클래스 내에 추가
+    companion object {
+        private const val DATA_TYPE_TEMPERATURE = 0x01
+        private const val DATA_TYPE_HUMIDITY = 0x02
+    }
 
     private lateinit var handler: Handler
     private var readRunnable: Runnable? = null
@@ -171,18 +178,14 @@ class MainActivity : AppCompatActivity() {
 
         override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                Log.d("MainActivity", "Services discovered")
-                // 환경 센싱 서비스 가져오기
                 val serviceUUID = UUID.fromString("0000181a-0000-1000-8000-00805f9b34fb") // Environment Sensing Service
                 val environmentService = gatt.getService(serviceUUID)
                 if (environmentService != null) {
-                    tempCharacteristic = environmentService.getCharacteristic(tempCharacteristicUUID)
-                    humCharacteristic = environmentService.getCharacteristic(humCharacteristicUUID)
-
-                    if (tempCharacteristic != null && humCharacteristic != null) {
-                        startReadingCharacteristics()
+                    dataCharacteristic = environmentService.getCharacteristic(dataCharacteristicUUID)
+                    if (dataCharacteristic != null) {
+                        startReadingCharacteristic()
                     } else {
-                        Log.e("MainActivity", "온도 또는 습도 특성을 찾을 수 없습니다")
+                        Log.e("MainActivity", "데이터 특성을 찾을 수 없습니다")
                     }
                 } else {
                     Log.e("MainActivity", "환경 센싱 서비스를 찾을 수 없습니다")
@@ -190,6 +193,18 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Log.w("MainActivity", "onServicesDiscovered received: $status")
             }
+        }
+        private fun startReadingCharacteristic() {
+            handler = Handler(Looper.getMainLooper())
+            readRunnable = object : Runnable {
+                override fun run() {
+                    if (bluetoothGatt != null && dataCharacteristic != null) {
+                        bluetoothGatt?.readCharacteristic(dataCharacteristic)
+                        handler.postDelayed(this, 1000) // 1초마다 읽기
+                    }
+                }
+            }
+            handler.post(readRunnable!!)
         }
 
         private fun startReadingCharacteristics() {
@@ -218,17 +233,24 @@ class MainActivity : AppCompatActivity() {
         ) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 characteristic?.let {
-                    when (it.uuid) {
-                        tempCharacteristicUUID -> {
-                            val temperature = parseTemperature(it.value)
-                            runOnUiThread {
-                                findViewById<TextView>(R.id.room_temp).text = "$temperature"
-                            }
-                        }
-                        humCharacteristicUUID -> {
-                            val humidity = parseHumidity(it.value)
-                            runOnUiThread {
-                                findViewById<TextView>(R.id.room_hum).text = "$humidity"
+                    if (it.uuid == dataCharacteristicUUID) {
+                        val data = it.value
+                        if (data.size >= 3) {
+                            val dataType = data[0].toInt() and 0xFF
+                            val valueRaw = ((data[2].toInt() and 0xFF) shl 8) or (data[1].toInt() and 0xFF)
+                            val value = valueRaw / 100.0f
+
+                            when (dataType) {
+                                DATA_TYPE_TEMPERATURE -> {
+                                    runOnUiThread {
+                                        findViewById<TextView>(R.id.room_temp).text = "$value"
+                                    }
+                                }
+                                DATA_TYPE_HUMIDITY -> {
+                                    runOnUiThread {
+                                        findViewById<TextView>(R.id.room_hum).text = "$value"
+                                    }
+                                }
                             }
                         }
                     }
