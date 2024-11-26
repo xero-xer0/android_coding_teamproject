@@ -217,7 +217,7 @@ class MainActivity : AppCompatActivity() {
                 override fun run() {
                     if (bluetoothGatt != null && dataCharacteristic != null) {
                         bluetoothGatt?.readCharacteristic(dataCharacteristic)
-                        handler.postDelayed(this, 1000) // 1초마다 읽기
+                        handler.postDelayed(this, 500)
                     }
                 }
             }
