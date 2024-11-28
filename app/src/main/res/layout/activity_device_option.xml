@@ -38,7 +38,50 @@
             android:layout_height="wrap_content"
             android:columnCount="1"
             android:rowCount="4"
-            android:layout_margin="10dp">
+            android:layout_margin="3dp"
+            >
+            <TextView
+                style="@style/temp_hum_styles"
+                android:layout_width="match_parent"
+                android:text="앱 정보"
+                android:padding="16dp"
+                android:layout_margin="16dp"
+                android:background="@drawable/layout_radius_background"
+                android:id="@+id/appinfo"/>
+            <TextView
+                style="@style/temp_hum_styles"
+                android:layout_width="match_parent"
+                android:text="사용 방법"
+                android:padding="16dp"
+                android:layout_margin="16dp"
+                android:background="@drawable/layout_radius_background"
+                android:id="@+id/howtouse"/>
+
+            <TextView
+                style="@style/temp_hum_styles"
+                android:layout_width="match_parent"
+                android:text="문의 하기"
+                android:padding="16dp"
+                android:layout_margin="16dp"
+                android:background="@drawable/layout_radius_background"
+                android:id="@+id/feedback"/>
+            <TextView
+                style="@style/temp_hum_styles"
+                android:layout_width="match_parent"
+                android:text="기기 이름 변경"
+                android:padding="16dp"
+                android:layout_margin="16dp"
+                android:background="@drawable/layout_radius_background"
+                android:id="@+id/device_rename"/>
+            <TextView
+                style="@style/temp_hum_styles"
+                android:layout_width="match_parent"
+                android:text="기기 삭제"
+                android:padding="16dp"
+                android:layout_margin="16dp"
+                android:background="@drawable/layout_radius_background"
+                android:id="@+id/device_delete"/>
+
 
 
 

@@ -23,32 +23,48 @@
             android:scaleType="centerInside"
             android:src="@drawable/temp_hum_icon_fix"
             />
-        <TextView
-            style="@style/temp_hum_styles"
-            android:text="장소"
-            android:id="@+id/room_name"
-            />
-        <TextView
-            style="@style/temp_hum_styles"
-            android:text=" | "
-            />
-        <TextView
-            style="@style/temp_hum_styles"
-            android:text="온도"
-            android:id="@+id/room_temp"
-            />
-        <TextView
-            style="@style/temp_hum_styles"
-            android:text="°C | "
-            />
-        <TextView
-            style="@style/temp_hum_styles"
-            android:text="습도"
-            android:id="@+id/room_hum"
-            />
-        <TextView
-            style="@style/temp_hum_styles"
-            android:text="%"
-            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <TextView
+                style="@style/temp_hum_styles"
+                android:text="장소"
+                android:id="@+id/room_name"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            >
+            <TextView
+                style="@style/temp_hum_styles"
+                android:text="온도"
+                android:id="@+id/room_temp"
+                />
+            <TextView
+                style="@style/temp_hum_styles"
+                android:text="°C"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="10dp"
+            >
+            <TextView
+                style="@style/temp_hum_styles"
+                android:text="습도"
+                android:id="@+id/room_hum"
+                />
+            <TextView
+                style="@style/temp_hum_styles"
+                android:text="%"
+                />
+        </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -16,7 +16,8 @@
         android:background="@drawable/layout_radius_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:backgroundTint="#D0D0D0">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -74,8 +75,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Device Options"
             android:scaleType="centerInside"
-            android:tint="#D0D0D0"
-            android:src="@drawable/run_icon_card"/>
+            android:src="@drawable/light_icon_off"/>
     </LinearLayout>
     </LinearLayout>
     </LinearLayout>

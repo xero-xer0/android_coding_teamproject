@@ -240,8 +240,14 @@ class MainActivity : AppCompatActivity() {
             // UI 업데이트
             deviceFeatureTextView.text = if (newValue == 1) "LED 켜짐" else "LED 꺼짐"
             val deviceCard = findViewById<LinearLayout>(R.id.device_card)
-            if(newValue==1)deviceCard.background.setTint(Color.parseColor("#43de00"))
-            else deviceCard.background.setTint(Color.parseColor("#D0D0D0"))
+            if(newValue==1){
+                deviceCard.background.setTint(Color.parseColor("#43de00"))
+                findViewById<ImageButton>(R.id.device_action_button).setImageResource(R.drawable.light_icon_on)
+            }
+            else {
+                deviceCard.background.setTint(Color.parseColor("#D0D0D0"))
+                findViewById<ImageButton>(R.id.device_action_button).setImageResource(R.drawable.light_icon_off)
+            }
         }
 
         private fun startReadingCharacteristics() {
