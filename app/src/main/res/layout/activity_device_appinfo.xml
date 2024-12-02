@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/background__"
-
     >
 
     <!-- Header with "Smart Hub" text and "+" button -->
@@ -25,7 +24,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Smart Hub | Options"
+                android:text="Smart Hub | 앱 정보"
                 android:textColor="#D0D0D0"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -39,34 +38,55 @@
             android:layout_height="wrap_content"
             android:columnCount="1"
             android:rowCount="4"
-            android:layout_margin="3dp"
-            >
-            <TextView
-                style="@style/temp_hum_styles"
+            android:layout_margin="10dp">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:text="앱 정보"
-                android:padding="16dp"
-                android:layout_margin="16dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/layout_radius_background"
-                android:id="@+id/appinfo"/>
-            <TextView
-                style="@style/temp_hum_styles"
+                android:orientation="vertical"
+                android:padding="16dp"
+                >
+                <TextView
+                    style="@style/temp_hum_styles"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Smart Hub"
+                    android:textAlignment="center"
+                    />
+                <TextView
+                    style="@style/temp_hum_styles"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Version 1.0.0b\nMobile Programing"
+                    android:textSize="15dp"
+                    android:textAlignment="center"
+                    />
+            </LinearLayout>
+            <TextView/>
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:text="시연 영상"
-                android:padding="16dp"
-                android:layout_margin="16dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/layout_radius_background"
-                android:id="@+id/howtouse"/>
-
-            <TextView
-                style="@style/temp_hum_styles"
-                android:layout_width="match_parent"
-                android:text="문의하기"
+                android:orientation="vertical"
                 android:padding="16dp"
-                android:layout_margin="16dp"
-                android:background="@drawable/layout_radius_background"
-                android:id="@+id/feedback"/>
-
+                >
+                <TextView
+                    style="@style/temp_hum_styles"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Team Smart Hub"
+                    android:textAlignment="center"
+                    />
+                <TextView
+                    style="@style/temp_hum_styles"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="팀　　    　장：최보현\n\코틀린　 코딩：심찬영\n아두이노 코딩：이동현\n인터　 페이스：오현영"
+                    android:textSize="15dp"
+                    android:textAlignment="center"
+                    />
+            </LinearLayout>
+            <!-- Add more CardViews for additional devices if needed -->
 
         </GridLayout>
     </LinearLayout>

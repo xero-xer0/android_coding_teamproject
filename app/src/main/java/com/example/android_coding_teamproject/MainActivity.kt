@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var deviceStatusTextView: TextView
     private lateinit var deviceFeatureTextView: TextView
     private lateinit var actionButton: ImageButton
+    private lateinit var homeButton: ImageButton
     private var bluetoothGatt: BluetoothGatt? = null
     // 데이터 특성 UUID 정의
     private val ledServiceUUID: UUID = UUID.fromString("de8a5aac-a99b-c315-0c80-60d4cbb51224")
@@ -64,50 +65,26 @@ class MainActivity : AppCompatActivity() {
         deviceNameTextView = findViewById(R.id.device_name)
         deviceStatusTextView = findViewById(R.id.device_status)
         deviceFeatureTextView = findViewById(R.id.device_feature)
+        homeButton = findViewById(R.id.bottom_home_button)
+        menubtn = findViewById(R.id.bottom_menu_button)
+
         actionButton = findViewById(R.id.device_action_button)
 
         addbtn = findViewById(R.id.add_device_button)
         addbtn.setOnClickListener {
             startActivity(Intent(this, DeviceListActivity::class.java))
         }
-        menubtn = findViewById(R.id.bottom_menu_button)
 
         updateDeviceStatus()
 
-        menubtn.setOnClickListener { view ->
-            val popup = PopupMenu(this, view).apply {
-                menuInflater.inflate(R.menu.popup, menu)
-                setOnMenuItemClickListener { menuItem ->
-                    when (menuItem.itemId) {
-                        R.id.menupo_add -> startActivity(
-                            Intent(
-                                this@MainActivity,
-                                DeviceListActivity::class.java
-                            )
-                        )
-                        R.id.menupo_disconnectall -> {
-                            val builder = AlertDialog.Builder(this@MainActivity)
-                            builder.setTitle("모든 기기 연결 해제")
-                            builder.setMessage("모든 기기의 연결을 해제하시겠습니까?")
-                            builder.setPositiveButton("네") { _, _ ->
-                                bluetoothGatt?.disconnect()
-                                bluetoothGatt?.close()
-                                bluetoothGatt = null
-                                connectedDevice = null  // 연결된 기기 정보를 null로 설정
-
-                                runOnUiThread {
-                                    updateDeviceStatus()  // UI 업데이트
-                                }
-                            }
-                            builder.setNegativeButton("아니오") { dialog, _ -> dialog.dismiss() }
-                            builder.show()
-                        }
-                    }
-                    true
-                }
-            }
-            popup.show()
+        menubtn.setOnClickListener {
+            val intent = Intent(this, activity_device_option::class.java)
+            startActivity(intent)
         }
+
+
+
+
 
         // Edge-to-edge display
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -217,7 +194,7 @@ class MainActivity : AppCompatActivity() {
                 override fun run() {
                     if (bluetoothGatt != null && dataCharacteristic != null) {
                         bluetoothGatt?.readCharacteristic(dataCharacteristic)
-                        handler.postDelayed(this, 500)
+                        handler.postDelayed(this, 5000)
                     }
                 }
             }

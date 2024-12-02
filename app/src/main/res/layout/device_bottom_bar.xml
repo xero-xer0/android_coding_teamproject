@@ -41,18 +41,6 @@
             <ImageButton
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:contentDescription="자동화"
-                android:textAlignment="center"
-                android:layout_weight="1"
-                android:scaleType="centerInside"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/auto_icon"
-                app:tint="#D0D0D0"
-                android:id="@+id/bottom_auto_button"
-                />
-            <ImageButton
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
                 android:contentDescription="메뉴"
                 android:textAlignment="center"
                 android:layout_weight="1"
