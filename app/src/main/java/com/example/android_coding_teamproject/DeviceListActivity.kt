@@ -109,9 +109,14 @@ class DeviceListActivity : AppCompatActivity() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             result?.let { scanResult ->
                 val device = scanResult.device
+                val rssi = scanResult.rssi
 
                 if (!deviceList.contains(device)) {
                     deviceList.add(device)
+                    deviceList.sortByDescending { scanResult.rssi }
+                    if (deviceList.size > 20) {
+                        deviceList.subList(20, deviceList.size).clear()
+                    }
                     updateDeviceListView()
                 }
             }

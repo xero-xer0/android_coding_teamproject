@@ -28,11 +28,11 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             >
-            <TextView
-                style="@style/temp_hum_styles"
-                android:text="장소"
-                android:id="@+id/room_name"
-                />
+<!--            <TextView-->
+<!--                style="@style/temp_hum_styles"-->
+<!--                android:text="장소"-->
+<!--                android:id="@+id/room_name"-->
+<!--                />-->
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
