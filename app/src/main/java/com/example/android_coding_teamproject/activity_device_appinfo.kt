@@ -37,6 +37,7 @@ class activity_device_appinfo : AppCompatActivity() {
             finish()
         }
 
+
     }
 
 }

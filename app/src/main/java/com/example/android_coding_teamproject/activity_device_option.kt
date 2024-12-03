@@ -39,7 +39,7 @@ class activity_device_option : AppCompatActivity() {
             startActivity(intent2)
         }
         findViewById<TextView>(R.id.howtouse).setOnClickListener { view ->
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://forms.gle/LYbvMLkZJUPEhgKj8")))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://youtu.be/5_bmCYRsCkQ")))
         }
         findViewById<TextView>(R.id.feedback).setOnClickListener { view ->
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://forms.gle/LYbvMLkZJUPEhgKj8")))
